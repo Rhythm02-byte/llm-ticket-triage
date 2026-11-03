@@ -1,0 +1,144 @@
+{
+  "id": "TicketTriage0001",
+  "name": "Ticket triage",
+  "active": false,
+  "nodes": [
+    {
+      "id": "8f2c1a9e-1b1e-4c55-9a4e-000000000001",
+      "name": "Ticket webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "5d0b6c1e-7f0a-4f8e-9c1d-000000000001",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ticket",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "8f2c1a9e-1b1e-4c55-9a4e-000000000002",
+      "name": "Triage service",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://triage:8000/triage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $json.body.text }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "id": "8f2c1a9e-1b1e-4c55-9a4e-000000000003",
+      "name": "Choose route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "jsCode": "// Safety issues and anything urgent go to a person straight away.\nconst t = $input.first().json;\nlet route = 'support_queue';\nif (t.category === 'safety' || t.urgency === 'high') route = 'escalate';\nelse if (t.category === 'feedback') route = 'product_backlog';\nreturn [{ json: { ...t, route } }];"
+      }
+    },
+    {
+      "id": "8f2c1a9e-1b1e-4c55-9a4e-000000000004",
+      "name": "Reply",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "respondWith": "firstIncomingItem",
+        "options": {
+          "responseCode": "={{ $json.route === 'rejected' ? $json.status : 200 }}"
+        }
+      }
+    },
+    {
+      "id": "8f2c1a9e-1b1e-4c55-9a4e-000000000005",
+      "name": "Handle failure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        200
+      ],
+      "parameters": {
+        "jsCode": "// The API rejects invalid tickets with 422. Any other failure means the service could not be used.\nconst detail = JSON.stringify($input.first().json.error ?? $input.first().json);\nconst invalid = detail.includes('422');\nreturn [{ json: {\n  route: 'rejected',\n  status: invalid ? 400 : 502,\n  error: invalid ? 'invalid ticket: text must be 1 to 4000 characters' : 'triage service unavailable',\n} }];"
+      }
+    }
+  ],
+  "connections": {
+    "Ticket webhook": {
+      "main": [
+        [
+          {
+            "node": "Triage service",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Triage service": {
+      "main": [
+        [
+          {
+            "node": "Choose route",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose route": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle failure": {
+      "main": [
+        [
+          {
+            "node": "Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

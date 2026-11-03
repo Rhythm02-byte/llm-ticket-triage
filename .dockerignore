@@ -1,0 +1,5 @@
+.git
+__pycache__
+.pytest_cache
+eval/results
+n8n/data

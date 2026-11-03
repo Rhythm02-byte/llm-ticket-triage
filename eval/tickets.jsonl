@@ -1,0 +1,30 @@
+{"id": "t01", "language": "en", "category": "connectivity", "urgency": "medium", "text": "My phone won't pair with the bike over Bluetooth anymore since yesterday. I tried restarting both."}
+{"id": "t02", "language": "de", "category": "connectivity", "urgency": "medium", "text": "Die App zeigt seit drei Tagen den falschen Tankstand an, die Daten werden nicht mehr synchronisiert."}
+{"id": "t03", "language": "en", "category": "connectivity", "urgency": "medium", "text": "The app says 'vehicle offline' even though the bike is parked right next to me with full signal."}
+{"id": "t04", "language": "de", "category": "connectivity", "urgency": "high", "text": "Ich kann mein Fahrzeug nicht mehr über die App entriegeln, weil die Verbindung ständig abbricht. Ich komme nicht los."}
+{"id": "t05", "language": "en", "category": "connectivity", "urgency": "medium", "text": "Trip data from my last three rides never showed up in the app."}
+{"id": "t06", "language": "en", "category": "app_bug", "urgency": "high", "text": "The app crashes immediately every time I open it. I can't use it at all."}
+{"id": "t07", "language": "de", "category": "app_bug", "urgency": "medium", "text": "Der Button 'Fahrtenbuch exportieren' reagiert nicht. Über die Webseite funktioniert es."}
+{"id": "t08", "language": "en", "category": "app_bug", "urgency": "medium", "text": "The settings screen shows text in English even though my phone is set to German."}
+{"id": "t09", "language": "de", "category": "app_bug", "urgency": "medium", "text": "Die App friert ein, wenn ich ein Profilbild hochladen will."}
+{"id": "t10", "language": "en", "category": "app_bug", "urgency": "medium", "text": "After the update, dark mode makes the numbers on the statistics page unreadable."}
+{"id": "t11", "language": "en", "category": "navigation", "urgency": "medium", "text": "Turn-by-turn directions keep sending me onto a road that has been closed for weeks."}
+{"id": "t12", "language": "de", "category": "navigation", "urgency": "low", "text": "Kann ich in der Routenplanung Autobahnen vermeiden? Ich finde die Option nicht."}
+{"id": "t13", "language": "en", "category": "navigation", "urgency": "low", "text": "The map is missing the new bypass road that opened in my town last month."}
+{"id": "t14", "language": "de", "category": "navigation", "urgency": "medium", "text": "Die Navigation berechnet die Ankunftszeit völlig falsch, immer 30 Minuten zu früh."}
+{"id": "t15", "language": "en", "category": "navigation", "urgency": "medium", "text": "Saved routes disappear from my favourites after a few days."}
+{"id": "t16", "language": "en", "category": "account", "urgency": "high", "text": "I was charged twice for my yearly subscription this month."}
+{"id": "t17", "language": "de", "category": "account", "urgency": "high", "text": "Ich habe mein Passwort vergessen und die E-Mail zum Zurücksetzen kommt nicht an. Ich komme nicht mehr in mein Konto."}
+{"id": "t18", "language": "en", "category": "account", "urgency": "low", "text": "How do I change the email address on my account?"}
+{"id": "t19", "language": "de", "category": "account", "urgency": "low", "text": "Wo finde ich die Rechnungen für mein Abo?"}
+{"id": "t20", "language": "en", "category": "account", "urgency": "high", "text": "I can't log in at all. It says my account doesn't exist, but I've used it for two years."}
+{"id": "t21", "language": "en", "category": "safety", "urgency": "high", "text": "I had a fall yesterday and the crash detection didn't trigger any emergency call."}
+{"id": "t22", "language": "de", "category": "safety", "urgency": "high", "text": "Der Notruf wurde ausgelöst, obwohl ich das Motorrad nur abgestellt habe. Das ist schon dreimal passiert."}
+{"id": "t23", "language": "en", "category": "safety", "urgency": "high", "text": "The app shows a warning that the tyre pressure sensor failed, then the warning disappears a minute later."}
+{"id": "t24", "language": "de", "category": "safety", "urgency": "high", "text": "Die Sturzerkennung ist in der App plötzlich deaktiviert und lässt sich nicht wieder einschalten."}
+{"id": "t25", "language": "en", "category": "safety", "urgency": "high", "text": "My emergency contact keeps getting removed from the app after every update."}
+{"id": "t26", "language": "en", "category": "feedback", "urgency": "low", "text": "Love the new ride statistics, great job!"}
+{"id": "t27", "language": "de", "category": "feedback", "urgency": "low", "text": "Es wäre super, wenn man Fahrten mit Freunden teilen könnte."}
+{"id": "t28", "language": "en", "category": "feedback", "urgency": "low", "text": "Please add a home screen widget that shows the fuel level."}
+{"id": "t29", "language": "de", "category": "feedback", "urgency": "low", "text": "Die neue Startseite ist viel übersichtlicher als vorher. Danke!"}
+{"id": "t30", "language": "en", "category": "feedback", "urgency": "low", "text": "It would be nice to export trips as GPX files for other apps."}
