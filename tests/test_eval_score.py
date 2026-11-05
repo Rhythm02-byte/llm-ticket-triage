@@ -55,3 +55,12 @@ def test_route_metrics_separate_missed_and_false_escalations():
     assert metrics["missed_escalations"] == ["a"]
     assert metrics["false_escalations"] == ["b"]
     assert metrics["route_accuracy"] == 1 / 3
+
+
+def test_safety_net_turns_a_missed_safety_ticket_into_an_escalation():
+    tickets = [{"id": "a", "category": "safety", "urgency": "high", "language": "en",
+                "text": "My emergency contact keeps getting removed."}]
+    predictions = [{"category": "account", "urgency": "medium", "language": "en"}]
+
+    assert run_eval.route_metrics(tickets, predictions)["missed_escalations"] == ["a"]
+    assert run_eval.route_metrics(tickets, predictions, safety_net=True)["escalations_caught"] == 1

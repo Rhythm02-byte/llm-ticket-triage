@@ -11,6 +11,7 @@ from pathlib import Path
 
 from triage.llm import OllamaClient, TriageError
 from triage.routing import route
+from triage.safety import find_safety_terms
 
 EVAL_DIR = Path(__file__).resolve().parent
 RESULTS_DIR = EVAL_DIR / "results"
@@ -33,14 +34,18 @@ def score(tickets, predictions):
     return result
 
 
-def route_metrics(tickets, predictions):
+def route_metrics(tickets, predictions, safety_net=False):
     """What the routing does with the model's answers, compared with routing the labels.
 
     A missed escalation is the costly error: a ticket that needed a person went to a queue.
     A false escalation costs staff time but is safe.
+    With safety_net, the keyword safety net also runs on each ticket's text, as it does in the API.
+    An invalid model reply still counts as unrouted: the API returns 502 and nothing is routed.
     """
     expected = [route(t["category"], t["urgency"]) for t in tickets]
-    actual = [None if p is None else route(p["category"], p["urgency"]) for p in predictions]
+    actual = [None if p is None else route(p["category"], p["urgency"],
+                                           find_safety_terms(t["text"]) if safety_net else ())
+              for t, p in zip(tickets, predictions)]
     should = [i for i, e in enumerate(expected) if e == "escalate"]
     return {
         "route_accuracy": sum(e == a for e, a in zip(expected, actual)) / len(tickets),
@@ -73,6 +78,7 @@ def write_report(model, tickets, predictions, latencies):
             f.write(json.dumps({**t, "predicted": p, "seconds": s}, ensure_ascii=False) + "\n")
 
     scores, routes = score(tickets, predictions), route_metrics(tickets, predictions)
+    net = route_metrics(tickets, predictions, safety_net=True)
     confusion = Counter((t["urgency"], p["urgency"]) for t, p in zip(tickets, predictions) if p)
     misses = [(t, p) for t, p in zip(tickets, predictions) if p is None or any(p[f] != t[f] for f in FIELDS)]
 
@@ -85,6 +91,13 @@ def write_report(model, tickets, predictions, latencies):
               f"| false escalations | {len(routes['false_escalations'])} ({', '.join(routes['false_escalations']) or 'none'}) |",
               f"| invalid output after retry | {scores['failed']} |",
               f"| median seconds per ticket | {sorted(latencies)[len(latencies) // 2]:.1f} |",
+              "", "## With the keyword safety net", "",
+              "The same model replies, routed with the safety net in `src/triage/safety.py` switched on.", "",
+              "| Measure | Result |", "|---|---|",
+              f"| route accuracy | {net['route_accuracy']:.0%} |",
+              f"| escalations caught | {net['escalations_caught']} of {net['escalations_expected']} |",
+              f"| missed escalations | {', '.join(net['missed_escalations']) or 'none'} |",
+              f"| false escalations | {len(net['false_escalations'])} ({', '.join(net['false_escalations']) or 'none'}) |",
               "", "## Urgency: label vs predicted", "", "| Label | Predicted | Count |", "|---|---|---|"]
     lines += [f"| {a} | {b} | {c} |" for (a, b), c in sorted(confusion.items())]
     lines += ["", "## Mismatches", ""]
@@ -92,7 +105,7 @@ def write_report(model, tickets, predictions, latencies):
         got = "invalid output" if p is None else ", ".join(f"{f}: {t[f]} → {p[f]}" for f in FIELDS if p[f] != t[f])
         lines.append(f"- **{t['id']}** ({t['language']}) {got}. _{t['text']}_")
     (RESULTS_DIR / f"{slug}.md").write_text("\n".join(lines) + "\n")
-    return {**scores, **routes}
+    return {**scores, **routes, "with_safety_net": net}
 
 
 def main():

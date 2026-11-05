@@ -36,5 +36,6 @@ class Triage(BaseModel):
 
 
 class TriageResponse(Triage):
+    safety_terms: list[str] = Field(description="Safety terms found by the keyword safety net. Any match escalates.")
     model: str
     latency_ms: int

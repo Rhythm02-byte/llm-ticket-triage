@@ -51,7 +51,7 @@
         0
       ],
       "parameters": {
-        "jsCode": "// Safety issues and anything urgent go to a person straight away.\nconst t = $input.first().json;\nlet route = 'support_queue';\nif (t.category === 'safety' || t.urgency === 'high') route = 'escalate';\nelse if (t.category === 'feedback') route = 'product_backlog';\nreturn [{ json: { ...t, route } }];"
+        "jsCode": "// Safety issues, anything urgent, and any ticket the keyword safety net flagged go to a person straight away.\nconst t = $input.first().json;\nlet route = 'support_queue';\nif (t.category === 'safety' || t.urgency === 'high' || (t.safety_terms ?? []).length > 0) route = 'escalate';\nelse if (t.category === 'feedback') route = 'product_backlog';\nreturn [{ json: { ...t, route } }];"
       }
     },
     {

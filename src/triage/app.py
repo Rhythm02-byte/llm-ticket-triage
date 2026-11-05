@@ -8,6 +8,7 @@ import httpx
 from fastapi import Depends, FastAPI, HTTPException, Response, status
 
 from triage.llm import OllamaClient, TriageError
+from triage.safety import find_safety_terms
 from triage.schema import TicketIn, TriageResponse
 
 app = FastAPI(title="LLM Ticket Triage")
@@ -35,4 +36,9 @@ def triage(ticket: TicketIn, client: OllamaClient = Depends(get_client)):
     except httpx.HTTPError:
         raise HTTPException(status_code=503, detail="model service is unreachable")
     latency_ms = int((time.perf_counter() - started) * 1000)
-    return TriageResponse(**result.model_dump(), model=client.model, latency_ms=latency_ms)
+    return TriageResponse(
+        **result.model_dump(),
+        safety_terms=find_safety_terms(ticket.text),
+        model=client.model,
+        latency_ms=latency_ms,
+    )
