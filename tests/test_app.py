@@ -48,6 +48,20 @@ def test_valid_reply_is_returned_with_model_and_latency(use_client):
     assert body["language"] == "de"
     assert body["model"] == "fake-model"
     assert body["latency_ms"] >= 0
+    assert body["safety_terms"] == []
+
+
+def test_safety_terms_are_returned_without_changing_the_model_answer(use_client):
+    # The reply says "connectivity, medium"; the ticket mentions brakes. Both are kept,
+    # so a reviewer can see what the model said and why the ticket was escalated.
+    client = use_client(FakeClient([VALID]))
+
+    response = client.post("/triage", json={"text": "Die App verbindet sich nicht und die ABS-Warnung blinkt."})
+
+    body = response.json()
+    assert body["category"] == "connectivity"
+    assert body["urgency"] == "medium"
+    assert body["safety_terms"] == ["brakes"]
 
 
 def test_invalid_reply_is_retried_once(use_client):

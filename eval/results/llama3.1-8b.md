@@ -15,6 +15,17 @@
 | invalid output after retry | 0 |
 | median seconds per ticket | 2.5 |
 
+## With the keyword safety net
+
+The same model replies, routed with the safety net in `src/triage/safety.py` switched on.
+
+| Measure | Result |
+|---|---|
+| route accuracy | 90% |
+| escalations caught | 10 of 10 |
+| missed escalations | none |
+| false escalations | 3 (t02, t03, t11) |
+
 ## Urgency: label vs predicted
 
 | Label | Predicted | Count |
